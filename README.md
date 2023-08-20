@@ -14,7 +14,11 @@ To prevent abuse, the Scrambler is restricted by default to browsing its host do
 
 ## Scrambling Scrapers
 
-To properly annoy scrapers, you'll need to somehow redirect their requests through the Scrambler. If you use Apache httpd, an easy way to do that is using [mod\_rewrite](https://httpd.apache.org/docs/current/mod/mod_rewrite.html). Here's an example:
+Before we start, let's get one thing out of the way:
+
+**The Scrambler is not intended to provide serious protection from scraping.** While I hope it is effective, the real point is to amuse humans rather than to frustrate bots, because all technical measures to prevent scraping can be circumvented. The proper way to address this misbehavior is through [regulation](https://www.schneier.com/blog/archives/2023/08/zoom-can-spy-on-your-calls-and-use-the-conversation-to-train-ai-but-says-that-it-wont.html). AI companies know this, which is why every time it comes up they change the subject to [bad science fiction](https://arstechnica.com/information-technology/2023/05/openai-execs-warn-of-risk-of-extinction-from-artificial-intelligence-in-new-open-letter/). Regulation, of course, is a complicated subject, and I'm not going to get into the details here.
+
+Now then. To properly annoy scrapers, you'll need to somehow redirect their requests through the Scrambler. If you use Apache httpd, an easy way to do that is using [mod\_rewrite](https://httpd.apache.org/docs/current/mod/mod_rewrite.html). Here's an example:
 
 ```apacheconf
 RewriteCond %{HTTP_USER_AGENT} GPTBot|Wget
@@ -46,8 +50,6 @@ Disallow: /cgi-bin/scrambler.py
 ```
 
 Legitimate scrapers that obey `robots.txt` now know they're safe from scrambling. Naughty ones won't be hitting it through that URL -- to them it will look like they're accessing your website normally -- so it doesn't matter if they check `robots.txt` or not.
-
-**The Scrambler is not intended to provide serious protection from scraping.** While I hope it is effective, the real point is to amuse humans rather than to frustrate bots, because all technical measures to prevent scraping can be circumvented. The proper way to address this misbehavior is through [regulation](https://www.schneier.com/blog/archives/2023/08/zoom-can-spy-on-your-calls-and-use-the-conversation-to-train-ai-but-says-that-it-wont.html). AI companies know this, which is why every time it comes up they change the subject to [bad science fiction](https://arstechnica.com/information-technology/2023/05/openai-execs-warn-of-risk-of-extinction-from-artificial-intelligence-in-new-open-letter/). Regulation, of course, is a complicated subject, and I'm not going to get into the details here.
 
 
 ## Security
