@@ -9,7 +9,7 @@ The Scrambler is a CGI script written in Python 3. It uses no modules outside th
 
 To scramble a webpage, pass its URL through the [query string](https://en.wikipedia.org/wiki/Query_string), like so: `?url=https%3A//www.example.com` (`%3A` is the escape code for the `':'` character). If you do not specify a URL, the Scrambler defaults to the root page of your domain.
 
-To prevent abuse, the Scrambler is restricted by default to browsing its host domain. You can allow access to additional sites by setting the `SCRAMBLER_ALLOWLIST` environment variable to a comma-separated list of domains. Note that the domain must *exactly* match your allowlist -- `example.com` and `www.example.com` would be considered separate sites.
+To prevent abuse, the Scrambler is restricted by default to browsing its host domain. You can allow access to additional sites by setting the `SCRAMBLER_ALLOWLIST` environment variable to a comma-separated list of domains. Note that the domain must *exactly* match your allowlist -- `example.com` and `www.example.com` would be considered separate sites. Other precautions the Scrambler implements are detailed below under "Security".
 
 
 ## Scrambling Scrapers
@@ -20,7 +20,7 @@ To properly annoy scrapers, you'll need to somehow redirect their requests throu
 RewriteCond %{HTTP_USER_AGENT} GPTBot|Wget
 RewriteCond %{REQUEST_URI} \.(html|php)$
 RewriteCond %{REQUEST_URI} !^/cgi-bin/scrambler.py$
-RewriteRule ^(.*) /cgi-bin/scrambler.py?honeypot=1&url=%{REQUEST_SCHEME}\%3A//%{HTTP_HOST}%{REQUEST_URL} [L]
+RewriteRule ^(.*) /cgi-bin/scrambler.py?honeypot=1&url=%{REQUEST_SCHEME}\%3A//%{HTTP_HOST}%{REQUEST_URI} [L]
 ```
 
 The three lines starting with `RewriteCond` specify whose requests for what get scrambled:
@@ -40,14 +40,14 @@ The `RewriteRule` on the last line is what sends these naughty requests through 
 
 To avoid confusing more helpful bots, like the ones that index sites for search engines, you should probably block them from accessing the Scrambler directly. The following lines in your `robots.txt` should do it:
 
-```
+```robots
 User-agent: *
 Disallow: /cgi-bin/scrambler.py
 ```
 
 Legitimate scrapers that obey `robots.txt` now know they're safe from scrambling. Naughty ones won't be hitting it through that URL -- to them it will look like they're accessing your website normally -- so it doesn't matter if they check `robots.txt` or not.
 
-**The Scrambler is not intended as serious protection from scraping.** While I hope it is effective, the real point is to amuse humans rather than to frustrate bots, because all technical measures to prevent scraping can be circumvented. The proper way to address this misbehavior is through [regulation](https://www.schneier.com/blog/archives/2023/08/zoom-can-spy-on-your-calls-and-use-the-conversation-to-train-ai-but-says-that-it-wont.html). AI companies know this, which is why every time it comes up they change the subject to [bad science fiction](https://arstechnica.com/information-technology/2023/05/openai-execs-warn-of-risk-of-extinction-from-artificial-intelligence-in-new-open-letter/). Regulation, of course, is a complicated subject, and I'm not going to get into the details here.
+**The Scrambler is not intended to provide serious protection from scraping.** While I hope it is effective, the real point is to amuse humans rather than to frustrate bots, because all technical measures to prevent scraping can be circumvented. The proper way to address this misbehavior is through [regulation](https://www.schneier.com/blog/archives/2023/08/zoom-can-spy-on-your-calls-and-use-the-conversation-to-train-ai-but-says-that-it-wont.html). AI companies know this, which is why every time it comes up they change the subject to [bad science fiction](https://arstechnica.com/information-technology/2023/05/openai-execs-warn-of-risk-of-extinction-from-artificial-intelligence-in-new-open-letter/). Regulation, of course, is a complicated subject, and I'm not going to get into the details here.
 
 
 ## Security
